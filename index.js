@@ -14,21 +14,23 @@ async function main(){
             return;
         }
         try {
-            const completion = await openai.createCompletion({
-                model: "text-davinci-004", // Hypothetical model name for v4; adjust based on actual model names
-                prompt: userInput,
-                max_tokens: 150, // Example parameter, adjust based on actual use case
-                n: 1, // Get a single response (adjust as needed)
-                stop: null, // Define any stopping conditions if necessary
+            const completion = await openai.chat.completions.create({
+                model: "gpt-3.5-turbo",
+                messages: [{"role": "user", "content": userInput}],
+
               });
         
-              const completionText = completion.data.choices[0].text;
+              const completionText = completion.choices[0].message.content;
               console.log(colors.green('Bot: ') + completionText);
         
         } catch (error) {
-            console.error(colors.red(error));
-        }
-        
+            
+            if (error instanceof OpenAI.APIError) {
+                console.error(colors.red('API Error: '), error.message);
+            } else {
+                console.error(colors.red('Error: '), error);
+            }
+        }      
     }
 }
 
